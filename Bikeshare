@@ -1,0 +1,20 @@
+import pandas as pd
+
+# Load the bike share data into a Pandas DataFrame
+trips_df = pd.read_csv("path/to/bike_share.csv")
+
+# Convert the "start_time" and "end_time" columns to datetime objects
+trips_df["start_time"] = pd.to_datetime(trips_df["start_time"])
+trips_df["end_time"] = pd.to_datetime(trips_df["end_time"])
+
+# Create a new column "duration" to store the duration of each trip
+trips_df["duration"] = trips_df["end_time"] - trips_df["start_time"]
+
+# Convert the "duration" column to minutes
+trips_df["duration"] = trips_df["duration"].dt.total_seconds() / 60
+
+# Group the data by the "start_time" hour
+trips_by_hour = trips_df.groupby(trips_df["start_time"].dt.hour).count()
+
+# Print the most popular travel times
+print(trips_by_hour.nlargest(10, "duration"))
